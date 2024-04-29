@@ -4,3 +4,7 @@
 # Temporary folders
 /temp
 /tmp
+
+# Env stuff
+.env*
+!.env.example

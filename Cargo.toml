@@ -5,4 +5,18 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 publish = false
 
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+# panic = "abort"
+
 [dependencies]
+anyhow = "1.0.82"
+dotenvy = "0.15.7"
+poise = "0.6.1"
+tokio = { version = "1.37.0", features = ["rt-multi-thread", "macros"] }
+tracing-subscriber = { version = "0.3.18", features = [
+    "tracing-log",
+    "env-filter",
+] }
