@@ -1,9 +1,18 @@
 use anyhow::Result;
 use poise::serenity_prelude as serenity;
 use dotenvy::dotenv;
+
 struct Data {} // User data, which is stored and accessible in all command invocations
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
+
+pub mod commands {
+    pub mod color;
+}
+
+use commands::{
+    color::color
+};
 
 /// Displays your or another user's account creation date
 #[poise::command(slash_command, prefix_command)]
@@ -27,7 +36,10 @@ async fn main() -> Result<()> {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![age()],
+            commands: vec![
+                age(),
+                color(),
+            ],
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
