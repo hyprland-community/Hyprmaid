@@ -1,7 +1,7 @@
 use anyhow::Result;
 use poise::serenity_prelude::{self as serenity, GuildId};
 use dotenvy::dotenv;
-use octocrab::Octocrab;
+
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;

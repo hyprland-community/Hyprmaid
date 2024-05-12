@@ -1,9 +1,9 @@
-use std::collections::HashMap;
+
 
 use octocrab::{models::{hooks::{Config as HookConfig, ContentType, Hook}, Repository}, Octocrab, Page};
 use anyhow::Result;
-use poise::serenity_prelude::{self as serenity, json::json, ChannelId, ChannelType, CreateChannel, EditGuildWelcomeScreen, Guild, GuildChannel, GuildId, Http, Webhook};
-use tokio::time::Interval;
+use poise::serenity_prelude::{self as serenity, json::json, ChannelType, CreateChannel, GuildChannel, GuildId, Http};
+
 
 
 const DELAY_MS : u64 = 10000;
