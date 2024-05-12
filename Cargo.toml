@@ -14,6 +14,8 @@ strip = true
 [dependencies]
 anyhow = "1.0.82"
 dotenvy = "0.15.7"
+octocrab = { git = "https://github.com/flick0/octocrab.git", version = "0.38.0" }
+# octocrab = "0.38.0"
 poise = "0.6.1"
 tokio = { version = "1.37.0", features = ["rt-multi-thread", "macros"] }
 tracing-subscriber = { version = "0.3.18", features = [

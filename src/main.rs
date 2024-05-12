@@ -1,9 +1,15 @@
 use anyhow::Result;
-use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::{self as serenity, GuildId};
 use dotenvy::dotenv;
-struct Data {} // User data, which is stored and accessible in all command invocations
+use octocrab::Octocrab;
+
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
+
+mod github;
+
+struct Data {
+} // User data, which is stored and accessible in all command invocations
 
 /// Displays your or another user's account creation date
 #[poise::command(slash_command, prefix_command)]
@@ -25,9 +31,14 @@ async fn main() -> Result<()> {
     let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
     let intents = serenity::GatewayIntents::non_privileged();
 
+    let github = github::Github::new(std::env::var("GITHUB_TOKEN").ok(),token.clone(), GuildId::new(977874420758638642));
+
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![age()],
+            commands: vec![
+                age(),
+                // commands::github::update_repos()
+            ],
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
@@ -42,7 +53,12 @@ async fn main() -> Result<()> {
         .framework(framework)
         .await?;
 
-    client.start().await?;
+    println!("starting bot");
+
+    let (git,discord) = tokio::join!(github.check_loop(), client.start());
+
+    git.unwrap();
+    discord.unwrap();
 
     Ok(())
 }
