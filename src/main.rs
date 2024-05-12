@@ -30,6 +30,7 @@ async fn main() -> Result<()> {
     let intents = serenity::GatewayIntents::non_privileged();
 
     let github = github::Github::new(
+        std::env::var("GITHUB_ORG").expect("missing GITHUB_ORG"),
         std::env::var("GITHUB_TOKEN").ok(),
         token.clone(),
         GuildId::new(std::env::var("DISCORD_SERVER_ID").expect("missing DISCORD_SERVER_ID")

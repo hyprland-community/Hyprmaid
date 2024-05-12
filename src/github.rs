@@ -43,12 +43,12 @@ pub struct Github {
 }
 
 impl Github {
-    pub fn new(github_token: Option<String>, bot_token: String, guild_id: GuildId) -> Self {
+    pub fn new(org: String,github_token: Option<String>, bot_token: String, guild_id: GuildId) -> Self {
         Self {
             github_token,
             bot_token,
             guild_id,
-            org: String::from("hyprland-community"),
+            org,
             webhook_events: vec![
                 WebhookEventType::BranchProtectionRule,
                 WebhookEventType::BranchProtectionRule,
