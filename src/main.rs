@@ -1,13 +1,13 @@
 use anyhow::Result;
-use dotenvy::dotenv;
 use poise::serenity_prelude::{self as serenity, GuildId};
+use dotenvy::dotenv;
+struct Data {} // User data, which is stored and accessible in all command invocations
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 mod github;
 
-struct Data {} // User data, which is stored and accessible in all command invocations
 
 /// Displays your or another user's account creation date
 #[poise::command(slash_command, prefix_command)]
@@ -32,7 +32,8 @@ async fn main() -> Result<()> {
     let github = github::Github::new(
         std::env::var("GITHUB_TOKEN").ok(),
         token.clone(),
-        GuildId::new(977874420758638642),
+        GuildId::new(std::env::var("DISCORD_SERVER_ID").expect("missing DISCORD_SERVER_ID")
+            .parse::<u64>().expect("invalid DISCORD_SERVER_ID")),
     );
 
     let framework = poise::Framework::builder()
