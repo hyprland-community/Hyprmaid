@@ -1,14 +1,12 @@
 
 
-use octocrab::{models::{hooks::{Config as HookConfig, ContentType, Hook}, Repository}, Octocrab, Page};
+use octocrab::{models::{hooks::{Config as HookConfig, ContentType, Hook}, webhook_events::WebhookEventType, Repository}, Octocrab, Page};
 use anyhow::Result;
 use poise::serenity_prelude::{self as serenity, json::json, ChannelType, CreateChannel, GuildChannel, GuildId, Http};
 
 
-
 const DELAY_MS : u64 = 10000;
 const BLACKLISTED_REPOS: [&str; 3] = [".GITHUB","SUBMISSIONS","COMMUNITY"];
-
 
 pub async fn fetch_repos(octo: Octocrab, org:&String) -> Result<Page<Repository>> {
 
@@ -36,7 +34,8 @@ pub struct Github {
     pub github_token: Option<String>,
     pub bot_token: String,
     pub guild_id: GuildId,
-    pub org: String
+    pub org: String,
+    pub webhook_events: Vec<WebhookEventType>
 }
 
 impl Github {
@@ -45,7 +44,57 @@ impl Github {
             github_token,
             bot_token,
             guild_id,
-            org: String::from("hyprlandcommunitytest")
+            org: String::from("hyprland-community"),
+            webhook_events: vec![
+                WebhookEventType::BranchProtectionRule,
+                WebhookEventType::BranchProtectionRule,
+                WebhookEventType::CheckRun,
+                WebhookEventType::CheckSuite,
+                WebhookEventType::CodeScanningAlert,
+                WebhookEventType::CommitComment,
+                WebhookEventType::Create,
+                WebhookEventType::Delete,
+                WebhookEventType::DependabotAlert,
+                WebhookEventType::DeployKey,
+                WebhookEventType::Deployment,
+                WebhookEventType::DeploymentStatus,
+                WebhookEventType::Discussion,
+                WebhookEventType::DiscussionComment,
+                WebhookEventType::Fork,
+                WebhookEventType::Gollum,
+                WebhookEventType::IssueComment,
+                WebhookEventType::Issues,
+                WebhookEventType::Label,
+                WebhookEventType::Member,
+                WebhookEventType::MergeGroup,
+                WebhookEventType::Meta,
+                WebhookEventType::Milestone,
+                WebhookEventType::Package,
+                WebhookEventType::PageBuild,
+                WebhookEventType::Ping,
+                WebhookEventType::ProjectCard,
+                WebhookEventType::Project,
+                WebhookEventType::ProjectColumn,
+                WebhookEventType::Public,
+                WebhookEventType::PullRequest,
+                WebhookEventType::PullRequestReviewComment,
+                WebhookEventType::PullRequestReview,
+                WebhookEventType::PullRequestReviewThread,
+                WebhookEventType::Push,
+                WebhookEventType::RegistryPackage,
+                WebhookEventType::Release,
+                WebhookEventType::RepositoryAdvisory,
+                WebhookEventType::Repository,
+                WebhookEventType::RepositoryImport,
+                WebhookEventType::RepositoryVulnerabilityAlert,
+                WebhookEventType::SecretScanningAlert,
+                WebhookEventType::SecretScanningAlertLocation,
+                WebhookEventType::SecurityAndAnalysis,
+                WebhookEventType::Star,
+                WebhookEventType::Status,
+                WebhookEventType::TeamAdd,
+                WebhookEventType::Watch,
+            ]
         }
     }
 
@@ -133,15 +182,17 @@ impl Github {
             let repo_handler = octo.repos(&self.org, &repo.name);
 
             let hook_config = HookConfig {
-                url: discord_webhook.url()?,
+                url: discord_webhook.url()? + "/github",
                 content_type: Some(ContentType::Json),
                 secret: None,
                 insecure_ssl: None,
             };
 
             let hook = Hook {
-                name: "discord".to_string(),
+                name: "web".to_string(),
+                active: true,
                 config: hook_config,
+                events: self.webhook_events.clone(),
                 ..Hook::default()
             };
 
